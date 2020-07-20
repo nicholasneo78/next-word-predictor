@@ -1,0 +1,218 @@
+---
+title: "Preliminary Exploratory Data Analysis"
+author: "Nicholas Neo"
+date: "17 July 2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Synopsis
+This is the Milestone Report for the Capstone Course of the Data Science Specialisation
+
+## Goal of this Report
+**Goal**   
+1. Explain the exploratory analysis for the SwiftKey dataset and the goal for the eventual app and algorithm.   
+2. Explain only the major features of the data that was identified.   
+3. Briefly summarise the plans for creating the prediction algorithm and Shiny app in a way that would be understandable to a non-data scientist manager.   
+4. Make use of tables and plots to illustrate important summaries of the datasets.
+
+## Motivation of this Report
+**Motivation**   
+1. Demonstrate that the data had been downloaded successfully.   
+2. Create a basic report of summary statistics about the datasets.   
+3. Report any interesting findings that was amassed so far.   
+4. Get feedback on the plans for creating a prediction algorithm and Shiny app.
+  
+## About the SwiftKey Dataset
+
+For this report, we will be only do exploratory analysis at the **English dataset** which consist of:   
+1. blog posts (en_US.blogs.txt)   
+2. news (en_US.news.txt)   
+3. twitter tweets (en_US.twitter.txt)
+
+**Load the English dataset**   
+*Note: the datasets were already downloaded beforehand and the root folder of the datasets (Cousera-SwiftKey) resides in the same directory as this markdown file.*
+```{r load_data}
+blog_data<-readLines("./Coursera-SwiftKey/final/en_US/en_US.blogs.txt", skipNul = TRUE, warn= FALSE)
+news_data<-readLines("./Coursera-SwiftKey/final/en_US/en_US.news.txt", skipNul = TRUE, warn=FALSE)
+twitter_data<-readLines("./Coursera-SwiftKey/final/en_US/en_US.twitter.txt", skipNul = TRUE, warn=FALSE)
+```
+
+**Size of each dataset**   
+*divide by 2^20 to convert bytes to megabytes*
+```{r check_size}
+blog_data_size<-file.info("./Coursera-SwiftKey/final/en_US/en_US.blogs.txt")$size/2^20
+news_data_size<-file.info("./Coursera-SwiftKey/final/en_US/en_US.news.txt")$size/2^20
+twitter_data_size<-file.info("./Coursera-SwiftKey/final/en_US/en_US.twitter.txt")$size/2^20
+
+# fit the size data into a dataframe to see the sizes clearer
+dataset_EN<-c(blog_data_size,news_data_size,twitter_data_size)
+df_size<-data.frame(dataset_EN)
+names(df_size)[1] <-"MB"
+row.names(df_size) <- c("Blog Posts", "News", "Twitter Tweets")
+round(df_size,2)
+```
+
+**Summary of each dataset**  
+*To get a rough sense of how each of the 3 English data look like*
+```{r data_summary}
+summary(blog_data)
+head(blog_data,3)
+summary(news_data)
+head(news_data,3)
+summary(twitter_data)
+head(twitter_data,3)
+```
+
+**Count number of lines and number of words in each of the dataset**   
+*Line Count*
+```{r line_count}
+blog_data_lc<-length(blog_data)
+news_data_lc<-length(news_data)
+twitter_data_lc<-length(twitter_data)
+dataset_lc <-c(blog_data_lc,news_data_lc, twitter_data_lc)
+dataset_lc_df <-data.frame(dataset_lc)
+names(dataset_lc_df)[1] <-"Line Count"
+# fit the size data into a dataframe to see the line count clearer
+row.names(dataset_lc_df) <- c("Blog Posts", "News", "Twitter Tweets")
+dataset_lc_df
+```
+   
+*Word Count*  
+```{r word_count}
+# import ngram library to count number of words
+library(ngram)
+
+blog_data_wc <-wordcount(blog_data)
+news_data_wc <-wordcount(news_data)
+twitter_data_wc <-wordcount(twitter_data)
+dataset_wc <-c(blog_data_wc,news_data_wc, twitter_data_wc)
+dataset_wc_df <-data.frame(dataset_wc)
+names(dataset_wc_df)[1] <-"Word Count"
+row.names(dataset_wc_df) <- c("Blog Posts", "News", "Twitter Tweets")
+dataset_wc_df
+```
+
+## Subsetting of data  
+Since the data size for all 3 files are relatively large, we will just sample one subset each from the 3 datasets for the exploratory analysis.   
+*We will just use 1% of the data from each of the 3 sets to form the subsets which in turn combine it into a dataframe.*   
+   
+```{r subset_data}
+SAMPLE_SIZE <- 0.01
+blog_index <- sample(seq_len(blog_data_lc),blog_data_lc*SAMPLE_SIZE)
+news_index <- sample(seq_len(news_data_lc),news_data_lc*SAMPLE_SIZE)
+twitter_index <- sample(seq_len(twitter_data_lc),twitter_data_lc*SAMPLE_SIZE)
+blog_data_subset <- blog_data[blog_index[]]
+news_data_subset <- news_data[news_index[]]
+twitter_data_subset <- twitter_data[twitter_index[]]
+```
+  
+**Delete all saved dataframe that are of no use anymore**   
+*This is to save space for more memory intensive variables*
+```{r clear_df}
+rm(list= ls()[!(ls() %in% c('blog_data_subset','news_data_subset','twitter_data_subset'))])
+```
+
+## Combining the datasets (subsets) into one dataset
+Using the 'tm' library from R, we will create a corpus from the dataset subsets.     
+**We will convert**   
+  - all alphabets into lowercase   
+**And omit**   
+  - non-ASCII character data   
+  - extra white spaces  
+  - punctuation marks  
+  - numeric values  
+*These steps are necessary as we want to remove all the characters that are not useful for the training of the data and to reassure that lower and upper case representation of the words are the same.*
+```{r data_processing, warning=FALSE}
+library(tm)
+library(NLP)
+main_df <- VCorpus(VectorSource(c(blog_data_subset, news_data_subset, twitter_data_subset)),readerControl=list(reader=readPlain,language="en"))
+main_df <- Corpus(VectorSource(sapply(main_df, function(row) iconv(row, "latin1", "ASCII", sub=""))))
+main_df <- tm_map(main_df, content_transformer(tolower)) 
+main_df <- tm_map(main_df, stripWhitespace)
+main_df <- tm_map(main_df, removePunctuation)
+main_df <- tm_map(main_df, removeNumbers)
+main_df <- tm_map(main_df, PlainTextDocument) 
+main_df <- Corpus(VectorSource(main_df))
+#head(main_df,5)
+```
+
+## Building a unigram
+*We will build the unigram from the text corpus main_df using RWeka to see the most common word in the data*
+```{r unigram_check}
+# import RWeka library
+library(RWeka)
+uni <- function(x) NGramTokenizer(x,Weka_control(min=1,max=1))
+uni_table <- TermDocumentMatrix(main_df, control=list(tokenize=uni))
+uni_corpus <- findFreqTerms(uni_table,lowfreq = 2000)
+uni_corpus_count <- rowSums(as.matrix(uni_table[uni_corpus,]))
+uni_corpus_df <- data.frame(Word=names(uni_corpus_count),frequency=uni_corpus_count)
+# get counts of words in descending order
+uni_corpus_sorted <- uni_corpus_df[order(-uni_corpus_df$frequency),]
+# get top 10 words with highest frequency
+head(uni_corpus_sorted,10)
+```
+
+## Interesting findings (so far...)
+From the text, you can see words with high frequencies (most common words) are usually a pronoun and stopwords, which does not add meaning to the sentence. As such, we will need to remove these stopwords so that our dataset only contains meaningful words that can be useful for the prediction later on. Removing stopwords also increases the accuracy of the prediction as there will be less variant of the combinations of the words.
+
+**Delete all saved dataframe that are of no use anymore**   
+*This is to save space for more memory intensive variables*
+```{r clear_df2}
+rm(list= ls()[!(ls() %in% c('main_df'))])
+```
+
+## Removal of Stopwords
+*Remove all stopwords*
+```{r remove_stopwords, warning=FALSE}
+main_df <- tm_map(main_df, removeWords, stopwords("english"))
+```
+
+## Building Uni-gram
+**Load RWeka**
+```{r initialise}
+library(RWeka)
+```
+
+**uni-gram**
+```{r build_unigram}
+uni <- function(x) NGramTokenizer(x,Weka_control(min=1,max=1))
+uni_table <- TermDocumentMatrix(main_df, control=list(tokenize=uni))
+uni_corpus <- findFreqTerms(uni_table,lowfreq = 500)
+uni_corpus_count <- rowSums(as.matrix(uni_table[uni_corpus,]))
+uni_corpus_df <- data.frame(Word=names(uni_corpus_count),frequency=uni_corpus_count)
+# get counts of words in descending order
+uni_corpus_sorted <- uni_corpus_df[order(-uni_corpus_df$frequency),]
+# get top 10 words with highest frequency
+head(uni_corpus_sorted,15)
+
+```
+
+## Graph
+*Plot the histogram of the top most 15 common word found*
+```{r plot}
+library(slam)
+library(ggplot2)
+main_corpus <-TermDocumentMatrix(main_df,control=list(minWordLength=1))
+wordFrequency <-rowapply_simple_triplet_matrix(main_corpus,sum)
+wordFrequency <-wordFrequency[order(wordFrequency,decreasing=T)]
+word_top15 <-as.data.frame(wordFrequency[1:15])
+
+#data$carb <- factor(data$carb, levels = data$carb[order(-data$mpg)])
+word_top15 <-data.frame(Words = row.names(word_top15),word_top15)
+names(word_top15)[2] = "Frequency"
+word_top15_plot = ggplot(data=word_top15, aes(x=reorder(Words,-Frequency), y=Frequency, fill=Frequency)) + geom_bar(stat="identity") + theme(axis.text.x=element_text(angle=45)) + geom_text(aes(label = Frequency ), vjust = -0.30, size = 3)
+word_top15_plot + ggtitle("Top 15 Words that are most frequently used") + theme(plot.title = element_text(hjust = 0.5)) + labs(y="Frequency", x = "Words") 
+```
+
+## Interesting Findings 
+With the barplot shown above, the word 'just' appeared the most number of times in the corpus of text. We could see that after removing all the stopwords, the top 15 common words in the corpus are as shown. These words are not surprisinglycommon as well because we used these words quite frequently in our daily life. 
+We should further do a bigram and trigram analysis so as to give a better sense of the most frequent used 2-word or 3-word phrase representation.  This type of findings can then further be used to predict trends in the data and to create a predictive model of English text.
+
+## Project Plan
+We can use the model that we have analysed and train to generate the next possible word given an input sentence by the user. With the term frequency–inverse document frequency (TF-IDF) analysis and analysing of the uni,bi and tri-gram, predicting the next word given an input sentence might be possible and this sort of mimic the real Recurrent Neural Network (RNN) in the deep learning literature. This is also quite a scaled down version of what SwiftKey is doing --> text prediction. We will then incorporate this idea and deploy it into Shiny.io which is a webpage that will serve the user. It allows the user to input an incomplete sentence and then expect a 1-word output based on their input.

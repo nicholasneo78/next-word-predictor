@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<body>
+
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore"><Strong>Brief Description on Next Word Predictor</strong></h1>
+
+</div>
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This is the capstone project from the <strong>Data Science Specialisation by Johns Hopkins University and SwiftKey</strong></p>
+<p>References can be found in the "References" tab</p>
+</div>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>The goal of this project is to take in one user input which can be a word, a phrase or an incomplete sentence. The algorithm will then use the inputs given and predict what the next word should be based on the SwiftKey datasets. The datasets consist of the twitter, blogs and news dataset in 4 languages. For simplicity, this application will only take in English inputs and only produces an English word prediction as output.</p>
+</div>
+
+<div id="project_type" class="section level2">
+<h2>What kind of project is this?</h2>
+<p>This project incorporates Text Mining and Natural Language Processing (NLP). The large text datasets from the 3 sources are scraped into .txt files which will then be further processed with data cleaning. The cleaned datasets are then ready to do predictions</p>
+</div>
+
+<div id="brief_steps" class="section level2">
+<h2>Pipeline of this project</h2>
+<p>These are the rough steps taken for this project:</p>
+<ul>
+<li><p>Web Scraping to create the raw datasets</p></li>
+<li><p>Process the raw datasets by cleaning the dataset</p></li>
+<li><p>Do exploratory data analysis to get insights from the datasets</p></li>
+<li><p>Do ngram analysis and determine which combination of words happen more frequently than the other combinations</p></li>
+<li><p>Devise an algorithm for the prediction</p></li>
+<li><p>Set up the web application using Shiny</p></li>
+<li><p>Deploy the application on shinyapps.io</p></li>
+</ul>
+</div>
+</div>
+</body>
+</html>
