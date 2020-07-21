@@ -12,21 +12,21 @@ shinyUI(fluidPage(titlePanel(appTitle,browserText),
                   theme = shinytheme("cosmo"),
                   navbarPage("An NLP Project",id ="navpanel",
                              
-                             # Home tab is panel with a sidebar and main sections  
+                             # Sidebar
                              tabPanel("App",
                                       sidebarLayout(
                                         
-                                        #sidebar - Instructions 
+                                        # Instructions of the app 
                                         sidebarPanel(id="sidebarPanel",
                                                      includeHTML("./components/instructions.html"),
                                                      width = 2
                                                      
                                         ), 
                                         
-                                        # mainpanel - text prediction app
+                                        # Tabs at the top of the app
                                         mainPanel(id="mainpanel",
                                                   tags$div(textInput("text", 
-                                                                     label = h3("Insert incomplete sentence here:"),
+                                                                     label = h3("Insert word/phrase/incomplete sentence here:"),
                                                                      value = "",
                                                                      width = '800px',
                                                                      placeholder = "E.g. the quick brown fox jumps over the lazy"),
@@ -46,7 +46,7 @@ shinyUI(fluidPage(titlePanel(appTitle,browserText),
                                                            br(),
                                                            tags$hr(),
                                                            
-                                                           h3("Next 3 predicted word:"),
+                                                           h3("Next 3 alternative predicted word:"),
                                                            tags$span(style="color:gray",
                                                                      tags$h3(textOutput("nextThree"))),
                                                            

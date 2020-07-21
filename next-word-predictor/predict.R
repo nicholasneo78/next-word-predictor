@@ -1,28 +1,23 @@
-#
-# Coursera Data Science Capstone - Final Project
-# E.Manton, March 25, 2018
-#
-
 # read in the ngram (bi, tri, quad) tables
-quadgram <- readRDS(file = "./ngrams/quadgram.RData")
-trigram <- readRDS(file = "./ngrams/trigram.RData")
 bigram <- readRDS(file = "./ngrams/bigram.RData")
+trigram <- readRDS(file = "./ngrams/trigram.RData")
+quadgram <- readRDS(file = "./ngrams/quadgram.RData")
 
-#helper function - cleanse input text
-cleanse<-function(t){
-  tt <- tolower(t)
-  tt <- removePunctuation(tt)
-  tt <- removeNumbers(tt)
-  tt <- str_replace_all(tt, "[^[:alnum:]]", " ") # use regex here
-  tt <- stripWhitespace(tt)
-  return(tt)
+# text processing of the input text
+processText<-function(text){
+  ptext <- tolower(text)
+  ptext <- removePunctuation(ptext)
+  ptext <- removeNumbers(ptext)
+  ptext <- str_replace_all(ptext, "[^[:alnum:]]", " ") # use regex here
+  ptext <- stripWhitespace(ptext)
+  return(ptext)
 }
 
-# helper function - freshen input by calling cleanse
-reFreshen <- function(t){
-  tt <- cleanse(t)
-  tt <- txt.to.words.ext(tt,preserve.case = TRUE)
-  return(tt)
+# refresh the input to make it more "real-time" as the user type/delete a word 
+refresh <- function(text){
+  rtext <- processText(text)
+  rtext <- txt.to.words.ext(rtext,preserve.case = TRUE)
+  return(rtext)
 }
 
 # prediction function

@@ -1,0 +1,12 @@
+name: next-word-predictor
+title: next-word-predictor
+username:
+account: thatnicneo
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2595405
+bundleId: 3414845
+url: https://thatnicneo.shinyapps.io/next-word-predictor/
+when: 1595296724.79226
+asMultiple: FALSE
+asStatic: FALSE
