@@ -2,7 +2,8 @@
 title: "Next Word Predictor"
 author: "Nicholas Neo"
 date: "21 July 2020"
-output: ioslides_presentation
+output:
+  ioslides_presentation: default
 ---
 
 ```{r setup, include=FALSE}
