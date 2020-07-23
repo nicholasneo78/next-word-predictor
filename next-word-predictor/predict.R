@@ -61,7 +61,7 @@ getNextThree <- function(wCount,userInput){
   }
   
   # intialise empty vector of length 3 to contain the next 3 predictions
-  nextThree <- vector("character",3)
+  nextThree <- vector("character", 3)
   
   # for loop to iterate and retreive the next 3 words
   for(i in 2:4){

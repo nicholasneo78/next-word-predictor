@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
   next3 <- reactive({
     inputText <- input$text
     processedText <- refresh(inputText)
-    wCount <- length(inputText)
+    wCount <- length(processedText)
     next3 <- getNextThree(wCount,processedText)
     })
 

@@ -5,8 +5,8 @@ account: thatnicneo
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2595405
-bundleId: 3414845
+bundleId: 3425229
 url: https://thatnicneo.shinyapps.io/next-word-predictor/
-when: 1595296724.79226
+when: 1595494768.56613
 asMultiple: FALSE
 asStatic: FALSE
