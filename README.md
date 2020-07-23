@@ -1,6 +1,6 @@
 # Next Word Predictor
 
-**_A capstone project done for the Coursera Johns Hopkins Data Science Specialistion_**
+**_A capstone project done for the Coursera Johns Hopkins Data Science Specialisation_**
   
 ## Overview
 **Goal of this project**   
@@ -10,6 +10,18 @@
 - The algorithm will use the inputs given and **predict** what the **next top matching word** should be based on the model that its being trained on.   
 - The algorithm will also predict the **next 3 best alternative words** that should come **after the input** from the user.   
 - Users can start entering an input in the message box and wait for ~3-5 seconds to see its effect!  
+
+**Examples**  
+  
+**Input a word**  
+![Input a word](./testImages/word.png)   
+  
+**Input a phrase**  
+![Input a phrase](./testImages/phrase.png)   
+  
+**Input a sentence**  
+![Input a word](./testImages/sentence.png)   
+  
   
 **Training Data**    
 - Corpora from SwiftKey.  
@@ -71,6 +83,6 @@
 **./next-word-predictor/components/references.html**  
 - Description of the "References" tab in the webapp.  
 
-## Webapp and Pitching Slide
+## Web App and Pitching Slide
 [Next Word Predictor App](https://thatnicneo.shinyapps.io/next-word-predictor/)  
 [Slide Deck](https://rpubs.com/thatnicneo/NextWordPredictor)
